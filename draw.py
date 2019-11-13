@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import sys
 
 from tkinter import *
-img = cv.imread('img/9.jpeg',0)
+img = cv.imread(sys.argv[1],0)
 edges = cv.Canny(img,100,200)
 contours,hierarchy = cv.findContours(edges, 1, 2)
 
