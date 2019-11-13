@@ -1,0 +1,30 @@
+import numpy as np
+import cv2 as cv
+from matplotlib import pyplot as plt
+import sys
+img = cv.imread(sys.argv[1],0)
+edges = cv.Canny(img,100,200)
+contours,hierarchy = cv.findContours(edges, 1, 2)
+
+def d(A, B):
+    x0, y0 = A
+    x1, y1 = B
+    return ((x1-x0)**2 + (y1-y0)**2)**(1/2)
+
+plines = []
+for a in contours:
+    p = (0,0)
+    pline = []
+    for b in a:
+        for x,y in b:
+            D = d(p, (x,y))
+#            print(D)
+            if 2 < D <= 40:
+                print("%s %s" % p)
+                pline += [p]
+            elif D > 40:
+                plines += [pline]
+                pline = []
+            p = (x,y)
+                
+#print(plines)
