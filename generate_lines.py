@@ -11,10 +11,12 @@ import cv2 as cv
 def read_resize(fname):
     img = cv.imread(fname,0)
     x, y = img.shape
-    if x > y:
-        img = cv.resize(img, (y * x // 640, 640))
+    if x < y:
+        print(x, y, (640, y * 640 // x))
+        img = cv.resize(img, (640, y * 640 // x))
     else:
-        img = cv.resize(img, (480, x * y // 480))
+        print(x, y, (x * 480 // y, 480))
+        img = cv.resize(img, (x * 480 // y, 480))
     return img
 
 def d(A, B):
@@ -29,12 +31,19 @@ def generate_lines(_in, _out):
     contours,hierarchy = cv.findContours(cv.Canny(img,A,B), cv.RETR_LIST, cv.CHAIN_APPROX_TC89_KCOS)
     pen = 'up'
     p = (0,0)
-    for a in contours:
-        for b in a:
-            for x,y in b:
-                pen = 'up' if d(p, (x,y)) > 20 else 'dn'
-                _out.put({'pen':pen, 'line':(p[0], p[1], x, y)})
-                p = (x,y)
+    n = 0
+    try:
+        for a in contours:
+            for b in a:
+                for x,y in b:
+                    pen = 'up' if d(p, (x,y)) > 20 else 'dn'
+                    _out.put({'pen':pen, 'line':(p[0], p[1], x, y)})
+                    n += 1
+                    assert n < 10000
+                    p = (x,y)
+    except AssertionError:
+        pass
+    _out.put('end')
 
     
     
@@ -50,7 +59,7 @@ if __name__ == '__main__':
     
     while 1:
         try:
-            print(q2.get(timeout=1))
+            pass # print(q2.get(timeout=1))
         except Empty:
             break
     t.join()
