@@ -6,7 +6,7 @@ import sys
 from tkinter import *
 img = cv.imread(sys.argv[1],0)
 edges = cv.Canny(img,100,200)
-contours,hierarchy = cv.findContours(edges, 1, 2)
+contours,hierarchy = cv.findContours(edges, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE )
 
 def d(A, B):
     x0, y0 = A
