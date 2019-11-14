@@ -11,12 +11,14 @@ import cv2 as cv
 def read_resize(fname):
     img = cv.imread(fname,0)
     x, y = img.shape
-    if x < y:
-        print(x, y, (640, y * 640 // x))
-        img = cv.resize(img, (640, y * 640 // x))
+    if x / y > 1.33:
+        k = 640 / x
+        print(x, y, (640, k * y))
+        img = cv.resize(img, (640, int(k * y)))
     else:
-        print(x, y, (x * 480 // y, 480))
-        img = cv.resize(img, (x * 480 // y, 480))
+        k = 480 / y
+        print(x, y, (k * y, 480))
+        img = cv.resize(img, (int(k * y), 480))
     return img
 
 def d(A, B):
@@ -53,13 +55,13 @@ if __name__ == '__main__':
     q1 = Queue()
     q2 = Queue()
     t = Thread(target=generate_lines, args=[q1, q2])
-    q1.put('img/4.png')
+    q1.put('img/1.png')
     q1.put((100, 200))
     t.start()
     
-    while 1:
-        try:
-            pass # print(q2.get(timeout=1))
-        except Empty:
-            break
+#    while 1:
+#        try:
+#            pass # print(q2.get(timeout=1))
+#        except Empty:
+#            break
     t.join()
