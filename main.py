@@ -14,6 +14,9 @@ from queue import Queue, Empty
 
 class KukaWindow(Tk):
     
+    def __from_rgb(self, rgb):
+        return "#%02x%02x%02x" % rgb 
+    
     def __openfile(self):
         self.__file_name = fd.askopenfilename(
             filetypes=(
@@ -48,9 +51,9 @@ class KukaWindow(Tk):
         self.canvas = Canvas(self.mainframe, width=640, height=480, bg='white')
         self.canvas.pack(fill=BOTH)
         
+        
     def __startupdate(self, e):
         if self.__file_name != '[nofile]':
-            print(self.__file_name)
             if not self.__in_process:
                 self.__in_process = 1
                 
@@ -62,6 +65,7 @@ class KukaWindow(Tk):
                 self.after(500, self.__update_canvas)
             
     def __update_canvas(self):
+        r, g, b = 255, 255, 0
         while 1:
             try:
                 _in = self._in.get(timeout=0.1)
@@ -69,7 +73,9 @@ class KukaWindow(Tk):
                 x1, y1, x2, y2 = _in['line']
                 pen = _in['pen']
                 if pen == 'dn':
-                    self.canvas.create_line(x1, y1, x2, y2)
+                    self.canvas.create_line(x1, y1, x2, y2, fill = self.__from_rgb((int(r), int(g), int(b))))
+                    g -= 0.1 if g > 0 else 0
+                    r -= 0.1 if g < 0.2 and r > 0 else 0
             except Empty:
                 self.after(500, self.__update_canvas)
                 break
@@ -77,15 +83,28 @@ class KukaWindow(Tk):
                 self.__in_process = 0
                 self.update_thread.join()
                 break
-        
+            
+    def __checkcmdline(self, filename):
+        try:
+            assert filename != None
+            open(filename, 'rb').read(1)
+            self.__file_name = filename
+            self.__startupdate(None)
+        except AssertionError:
+            pass
+        except IOError as e:
+            print(e)
     
-    def __init__(self):
+    def __init__(self, filename):
         super().__init__()
         self.__configure()
         self.__bind_events()
+        
+        self.after(100, self.__checkcmdline, filename)
 
         
         
 if __name__ == '__main__':
-    kw = KukaWindow()
+    from sys import argv
+    kw = KukaWindow(argv[1] if argv else None)
     kw.mainloop()
