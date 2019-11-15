@@ -13,11 +13,9 @@ def read_resize(fname):
     x, y = img.shape
     if x / y > 1.33:
         k = 640 / x
-        print(x, y, (640, k * y))
         img = cv.resize(img, (640, int(k * y)))
     else:
         k = 480 / y
-        print(x, y, (k * y, 480))
         img = cv.resize(img, (int(k * y), 480))
     return img
 
