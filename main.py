@@ -11,6 +11,7 @@ from tkinter import filedialog as fd
 from generate_lines import generate_lines, d
 from threading import Thread
 from queue import Queue, Empty
+from gcode.settings import BEGIN_GCODE, END_GCODE
 
 class KukaWindow(Tk):
     
@@ -43,6 +44,8 @@ class KukaWindow(Tk):
         with open(exp_file_name, 'w') as exp:
             old_pen = 'up'
             old_pos = (0,0)
+            e = 0
+            exp.write(BEGIN_GCODE)
             exp.write('G0 Z10\n')
             while 1:
                 try:
@@ -52,20 +55,20 @@ class KukaWindow(Tk):
                     pos = (x2/3.2 + 10, y2/3.2 + 10)
                     pen = _in['pen']
                     if pen != old_pen:
-                        if pen == 'up': exp.write('G0 Z10\n')
-                        if pen == 'dn': exp.write('G1 Z0 S1\n')
+                        if pen == 'up': exp.write('G0 Z1\n')
+                        if pen == 'dn': exp.write('G1 Z0.1 S1\n')
                         old_pen = pen
                     if pen == 'up':
                         exp.write('G0 X%s Y%s\n' % pos)
                     if pen == 'dn':
-                        e = d(old_pos, pos) / 10
+                        e += d(old_pos, pos) / 10
                         exp.write('G1 X%s Y%s E%s\n' % (pos[0], pos[1], e))
                     old_pos = pos
                 except Empty:
                     break
                 except AssertionError:
-                    self.__in_process = 0
-                    self.update_thread.join()
+                    exp.write(END_GCODE)
+                    self.export_thread.join()
                     break              
         import sys
         print('export finished', file = sys.stderr)
@@ -153,7 +156,7 @@ class KukaWindow(Tk):
 if __name__ == '__main__':
     from sys import argv
     kw = KukaWindow(
-        argv[1] if len(argv) > 0 else None, 
-        argv[2] if len(argv) > 1 else None
+        argv[1] if len(argv) > 1 else None, 
+        argv[2] if len(argv) > 2 else None
     )
     kw.mainloop()
