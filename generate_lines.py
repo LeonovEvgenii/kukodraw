@@ -9,15 +9,18 @@ import numpy as np
 import cv2 as cv
 
 def read_resize(fname):
-    img = cv.imread(fname,0)
-    x, y = img.shape
-    if x / y > 1.33:
-        k = 640 / x
-        img = cv.resize(img, (640, int(k * y)))
-    else:
-        k = 480 / y
-        img = cv.resize(img, (int(k * y), 480))
-    return img
+    try:
+        img = cv.imread(fname,0)
+        x, y = img.shape
+        if x / y > 1.33:
+            k = 640 / x
+            img = cv.resize(img, (640, int(k * y)))
+        else:
+            k = 480 / y
+            img = cv.resize(img, (int(k * y), 480))
+        return img
+    except AttributeError:
+        raise ValueError('%s is not an image' % fname)
 
 def d(A, B):
     x0, y0 = A
@@ -27,22 +30,25 @@ def d(A, B):
 def generate_lines(_in, _out):
     fname  = _in.get()
     A, B = _in.get()
-    img = read_resize(fname)
-    contours,hierarchy = cv.findContours(cv.Canny(img,A,B), cv.RETR_LIST, cv.CHAIN_APPROX_TC89_KCOS)
-    pen = 'up'
-    p = (0,0)
-    n = 0
     try:
-        for a in contours:
-            for b in a:
-                for x,y in b:
-                    pen = 'up' if d(p, (x,y)) > 20 else 'dn'
-                    _out.put({'pen':pen, 'line':(p[0], p[1], x, y)})
-                    n += 1
-                    assert n < 10000
-                    p = (x,y)
-    except AssertionError:
-        pass
+        img = read_resize(fname)
+        contours,hierarchy = cv.findContours(cv.Canny(img,A,B), cv.RETR_LIST, cv.CHAIN_APPROX_TC89_KCOS)
+        pen = 'up'
+        p = (0,0)
+        n = 0
+        try:
+            for a in contours:
+                for b in a:
+                    for x,y in b:
+                        pen = 'up' if d(p, (x,y)) > 20 else 'dn'
+                        _out.put({'pen':pen, 'line':(p[0], p[1], x, y)})
+                        n += 1
+                        assert n < 10000
+                        p = (x,y)
+        except AssertionError:
+            pass
+    except ValueError as e:
+        print(e.args[0])
     _out.put('end')
 
     
