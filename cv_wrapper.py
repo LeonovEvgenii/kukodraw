@@ -6,7 +6,6 @@ Created on Mon Nov 18 12:57:46 2019
 @author: dan
 """
 
-import numpy as np
 import cv2 as cv
 
 def read_resize(fname, width = 640, height = 480):
