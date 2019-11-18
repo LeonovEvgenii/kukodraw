@@ -31,7 +31,7 @@ def get_contours(fname, A = 100, B = 200, width = 640, height = 480):
     return contours
 
 if __name__ == '__main__':
-    for im in ['img/5.png','/etc/passwd','nofile']:
+    for im in ['img/4.png','/etc/passwd','nofile']:
         try:
             print(get_contours(im, 100, 200))
         except Exception as e:
