@@ -17,19 +17,22 @@ from gcode.settings import BEGIN_GCODE, END_GCODE
 
 class KukaWindow(Tk):
     msg_n = 0
+    active_messages = []
     
     def __message(self, text):
-        def __hide(t):
+        def __hide(t, text):
             self.canvas.delete(t) 
             self.msg_n -= 1
+            self.active_messages.remove(text)
             
-        t = self.canvas.create_text(0, 0, text = text)
-        x1, y1, x2, y2 = self.canvas.bbox(t)
-        w, h = x2 - x1, y2 - y1
-        print(w,h)
-        self.canvas.move(t, 635 - w/2, 475 - h - self.msg_n * h * 1.5)
-        self.msg_n += 1
-        self.after(5000, __hide, t)
+        if text not in self.active_messages:
+            self.active_messages += [text]
+            t = self.canvas.create_text(0, 0, text = text)
+            x1, y1, x2, y2 = self.canvas.bbox(t)
+            w, h = x2 - x1, y2 - y1
+            self.canvas.move(t, 635 - w/2, 475 - h - self.msg_n * h * 1.5)
+            self.msg_n += 1
+            self.after(5000, __hide, t, text)
         
     def __openfile(self, file_name = None):
         if file_name == None:
@@ -43,16 +46,8 @@ class KukaWindow(Tk):
         else:
             self.__file_name = file_name
             
-#        self.__start_process_contours()
-        try:
-            contours = get_contours(self.__file_name,self.A.get(),self.B.get())
-            self.__file_name = file_name
-            self.canvas.delete('all')
-            self.after(50, self.__process_contours, 0, contours)
-            self.ncontour = 0
-        except ValueError as e:
-            self.__message(e.args[0])
-        
+        self.__start_process_contours(self.__file_name, self.A.get(), self.B.get())
+
     def __export(self):
         file_name = fd.asksaveasfilename(
             filetypes=(
@@ -60,6 +55,17 @@ class KukaWindow(Tk):
             )
         )
         self.after(50, self.__do_export, file_name)
+
+        
+    def __start_process_contours(self, file_name, A, B):
+        try:
+            contours = get_contours(file_name, A, B)
+            self.__file_name = file_name
+            self.canvas.delete('all')
+            self.after(50, self.__process_contours, 0, contours)
+            self.ncontour = 0
+        except ValueError as e:
+            self.__message(e.args[0])
     
     def __process_contours(self, i, contours):
         try:
@@ -80,18 +86,27 @@ class KukaWindow(Tk):
         pass
     
     def __startupdate(self, e):
+        try:
+            open(self.__file_name, 'rb').read(1)
+            self.__start_process_contours(self.__file_name, self.A.get(), self.B.get())
+        except IOError as e:
+            self.__message('"%s": %s' % (e.filename, e.strerror))
         
-        pass
     
-    def __checkcmdline(self, in_filename, out_filename):
+    def __checkcmdline(self, in_filename, out_filename, AB):
         try:
             assert in_filename != None
             open(in_filename, 'rb').read(1)
             self.__openfile(in_filename)
             self.__startupdate(None)
+            assert AB != None
+            A, B = AB[0], AB[1]
+            self.A.set(A) 
+            self.B.set(B)
             assert out_filename != None
             open(out_filename, 'wb').write(b'\n')
             self.__do_export(out_filename)
+            
         except AssertionError:
             pass
         except IOError as e:
@@ -123,11 +138,11 @@ class KukaWindow(Tk):
         self.bind('<Escape>', lambda x : self.destroy())
 
         
-    def __init__(self, in_filename, out_filename):
+    def __init__(self, in_filename, out_filename, AB):
         super().__init__()
         self.__configure()
         
-        self.after(100, self.__checkcmdline, in_filename, out_filename)
+        self.after(100, self.__checkcmdline, in_filename, out_filename, AB)
 
         self.__message('Кванториум "Фотоника". Рисуем на KUKA')
         
@@ -135,6 +150,7 @@ if __name__ == '__main__':
     from sys import argv
     kw = KukaWindow(
         argv[1] if len(argv) > 1 else None, 
-        argv[2] if len(argv) > 2 else None
+        argv[2] if len(argv) > 2 else None,
+        (argv[3], argv[4]) if len(argv) > 4 else None,
     )
     kw.mainloop()
