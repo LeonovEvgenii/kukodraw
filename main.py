@@ -5,6 +5,11 @@ Created on Wed Nov 13 22:21:38 2019
 
 @author: dan
 """
+template = """
+DECL E6POS XP%s={X %s,Y %s,Z 0.0,A -179.997406,B 0.00397241442,C 179.999054,S 2,T 8,E1 0.0,E2 0.0,E3 0.0,E4 0.0,E5 0.0,E6 0.0}
+DECL FDAT FP%s={TOOL_NO 1,BASE_NO 0,IPO_FRAME #BASE,POINT2[] " "}
+DECL LDAT LCPDAT%s={VEL 2.00000,ACC 100.000,APO_DIST 500.000,APO_FAC 50.0000,AXIS_VEL 100.000,AXIS_ACC 100.000,ORI_TYP #VAR,CIRC_TYP #BASE,JERK_FAC 50.0000,GEAR_JERK 100.000,EXAX_IGN 0}
+"""
 
 from tkinter import *
 from tkinter import filedialog as fd
@@ -54,8 +59,9 @@ class KukaWindow(Tk):
                 ("All files", "*.*"),
             )
         )
-        self.after(50, self.__do_export, file_name)
-
+        lines = self.canvas.find_withtag('drawing')
+        self.progress["maximum"] = len(lines)
+        self.after(50, self.__do_export, file_name, lines, 0, len(lines))
         
     def __start_process_contours(self, file_name, A, B):
         try:
@@ -75,16 +81,30 @@ class KukaWindow(Tk):
             for point in contour:
                 points += [point[0][0],point[0][1]]
             try:
-                self.canvas.create_line(points)
+                self.canvas.create_line(points, width = 2, tags = ('drawing',))
             except TclError:
                 pass
             self.after(1, self.__process_contours, i, contours)
         except IndexError:
-            self.__message('отрисовано')
+            self.__message('Отрисовано.')
         
-    def __do_export(self, file_name):
-        pass
-    
+    def __do_export(self, file_name, lines, n, N):
+        try:
+            if n == 0: self.__message('Экспорт в "%s"...' % file_name)
+            coords = self.canvas.coords(lines[n])
+            line_length = len(coords) // 2 - 2
+            pline = []
+            for i in range(line_length):
+                x1, y1 = coords[i*2+0], coords[i*2+1]
+                x2, y2 = coords[i*2+2], coords[i*2+3]
+                pline += [((x1,y1),(x2,y2))]
+                print(template % (i, x1, y1, i, i))
+            n += 1
+            self.progress.step()
+            self.after(10, self.__do_export, file_name, lines, n, N)
+        except IndexError:
+            self.__message('Экспортировано в "%s".' % file_name)
+            
     def __startupdate(self, e):
         try:
             open(self.__file_name, 'rb').read(1)
