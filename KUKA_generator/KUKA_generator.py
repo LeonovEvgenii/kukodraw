@@ -17,6 +17,7 @@ y_len=input().split()
 print('введите координаты(z)-')
 z_len=input().split()
 
+
 xp_len=[]
 total_xp=[]
 for i in range(len(x_len)):
@@ -33,11 +34,12 @@ print('total_xp='+ str(total_xp))
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #dat
-head_dat = ''' &ACCESS RVP
+head_dat = '''&ACCESS RVP
+&REL 5
 &PARAM EDITMASK = *
 &PARAM TEMPLATE = C:\KRC\Roboter\Template\\vorgabe
-&PARAM DISKPATH = KRC:\R1\\user programm\demonstratio
-DEFDAT test_face_copy
+&PARAM DISKPATH = KRC:\R1\\user programm\demonstration
+DEFDAT  test_face
 ;FOLD EXTERNAL DECLARATIONS;%{PE}%MKUKATPBASIS,%CEXT,%VCOMMON,%P
 ;FOLD BASISTECH EXT;%{PE}%MKUKATPBASIS,%CEXT,%VEXT,%P
 EXT  BAS (BAS_COMMAND  :IN,REAL  :IN )
@@ -45,6 +47,8 @@ DECL INT SUCCESS
 ;ENDFOLD (BASISTECH EXT)
 ;FOLD USER EXT;%{E}%MKUKATPUSER,%CEXT,%VEXT,%P
 ;Make your modifications here
+;ENDFOLD (USER EXT)
+;ENDFOLD (EXTERNAL DECLARATIONS)
  '''
 
 def first_point_dat(xp,x,y,z):
@@ -64,26 +68,28 @@ def point_dat(xp,x,y,z):
     
 DECL E6POS XP'''+str(xp)+'''={X '''+str(x)+''',Y '''+str(y)+''',Z '''+str(z)+''',A -179.997223,B 13.6174221,C -179.999832,S 2,T 10,E1 0.0,E2 0.0,E3 0.0,E4 0.0,E5 0.0,E6 0.0}
 DECL FDAT FP'''+str(xp)+'''={TOOL_NO 1,BASE_NO 0,IPO_FRAME #BASE,POINT2[] " "}
-DECL LDAT LCPDAT2={VEL 2.00000,ACC 100.000,APO_DIST 500.000,APO_FAC 50.0000,AXIS_VEL 100.000,AXIS_ACC 100.000,ORI_TYP #VAR,CIRC_TYP #BASE,JERK_FAC 50.0000,GEAR_JERK 100.000,EXAX_IGN 0}
+DECL LDAT LCPDAT'''+str(xp)+ '''={VEL 2.00000,ACC 100.000,APO_DIST 500.000,APO_FAC 50.0000,AXIS_VEL 100.000,AXIS_ACC 100.000,ORI_TYP #VAR,CIRC_TYP #BASE,JERK_FAC 50.0000,GEAR_JERK 100.000,EXAX_IGN 0}
     '''
     return point_dat
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 #src
 head_src ='''&ACCESS RVP
+&REL 5
 &PARAM EDITMASK = *
 &PARAM TEMPLATE = C:\KRC\Roboter\Template\\vorgabe
 &PARAM DISKPATH = KRC:\R1\\user programm\demonstration
-DEF test_face_copy( )
+DEF test_face( )
 ;FOLD INI;%{PE}
-FOLD BASISTECH INI
-GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
-INTERRUPT ON 3 
-BAS (#INITMOV,0 )
-;ENDFOLD (BASISTECH INI)
-;FOLD USER INI
-;Make your modifications here
-;ENDFOLD (USER INI)
+  ;FOLD BASISTECH INI
+    GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+    INTERRUPT ON 3 
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+
+  ;ENDFOLD (USER INI)
 ;ENDFOLD (INI)
 '''
 
@@ -141,7 +147,7 @@ for i in range(total_xp):
         photo_dat.write("%s%s" % (head_dat,first_point_dat(xp,x,y,z)))
         photo_dat.close()
         photo_src = open('photo.src','w')
-        photo_src.write("%s%s" % (head_src,start_home_src))
+        photo_src.write("%s%s%s" % (head_src,start_home_src,point_src(xp=xp)))
         photo_src.close()
     elif xp==0:
         pass
@@ -150,7 +156,7 @@ for i in range(total_xp):
         photo_dat.write((point_dat(xp,x,y,z)))
         photo_dat.close()
         photo_src = open('photo.src','a')
-        photo_src.write((point_src(xp=xp-1)))
+        photo_src.write((point_src(xp=xp)))
         photo_src.close()
     
 
