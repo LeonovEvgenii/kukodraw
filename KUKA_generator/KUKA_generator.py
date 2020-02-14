@@ -18,18 +18,7 @@ print('введите координаты(z)-')
 z_len=input().split()
 
 
-xp_len=[]
-total_xp=[]
-for i in range(len(x_len)):
-    xp_len.append(i+1)
-total_xp=len(xp_len)    
 
-
-print('x='+str(x_len))
-print('y='+str(y_len))
-print('z='+str(z_len))
-print('xp='+str(xp_len))
-print('total_xp='+ str(total_xp))
 
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -135,38 +124,52 @@ END
 '''
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+if len(x_len)== len(y_len) == len(z_len):
+    
+    
+    xp_len=[]
+    total_xp=[]
+    for i in range(len(x_len)):
+        xp_len.append(i+1)
+    total_xp=len(xp_len)    
+    
+    
+    print('x='+str(x_len))
+    print('y='+str(y_len))
+    print('z='+str(z_len))
+    print('xp='+str(xp_len))
+    print('total_xp='+ str(total_xp))
+    
+    
+    for i in range(total_xp):
+        x = x_len[i]
+        y = y_len[i]
+        z = z_len[i]
+        xp = xp_len[i]
+        if xp==1:    
+            photo_dat = open('photo.dat', 'w')
+            photo_dat.write("%s%s" % (head_dat,first_point_dat(xp,x,y,z)))
+            photo_dat.close()
+            photo_src = open('photo.src','w')
+            photo_src.write("%s%s%s" % (head_src,start_home_src,point_src(xp=xp)))
+            photo_src.close()
+        elif xp==0:
+            pass
+        else:
+            photo_dat = open('photo.dat', 'a')
+            photo_dat.write((point_dat(xp,x,y,z)))
+            photo_dat.close()
+            photo_src = open('photo.src','a')
+            photo_src.write((point_src(xp=xp)))
+            photo_src.close()
 
-for i in range(total_xp):
-    x = x_len[i]
-    y = y_len[i]
-    z = z_len[i]
-    xp = xp_len[i]
 
-    if xp==1:    
-        photo_dat = open('photo.dat', 'w')
-        photo_dat.write("%s%s" % (head_dat,first_point_dat(xp,x,y,z)))
-        photo_dat.close()
-        photo_src = open('photo.src','w')
-        photo_src.write("%s%s%s" % (head_src,start_home_src,point_src(xp=xp)))
-        photo_src.close()
-    elif xp==0:
-        pass
-    else:
-        photo_dat = open('photo.dat', 'a')
-        photo_dat.write((point_dat(xp,x,y,z)))
-        photo_dat.close()
-        photo_src = open('photo.src','a')
-        photo_src.write((point_src(xp=xp)))
-        photo_src.close()
-    
-
-    
-    
-    
-photo_dat = open('photo.dat', 'a')
-photo_dat.write('ENDDAT')
-photo_dat.close()
-photo_src = open('photo.src','a')
-photo_src.write((finish_home_src))
-photo_src.close()
+    photo_dat = open('photo.dat', 'a')
+    photo_dat.write('ENDDAT')
+    photo_dat.close()
+    photo_src = open('photo.src','a')
+    photo_src.write((finish_home_src))
+    photo_src.close()
+else:
+    print ('ERROR:количество введенных координат не совпадает')
     
