@@ -98,8 +98,13 @@ class KukaWindow(Tk):
                 x1, y1 = coords[i*2+0], coords[i*2+1]
                 x2, y2 = coords[i*2+2], coords[i*2+3]
                 pline += [((x1,y1),(x2,y2))]
-                print(template % (i, x1, y1, i, i))
+                # print(template % (i, x1, y1, i, i))
             n += 1
+
+            with open(file_name, 'a') as f:
+            	f.write(str(pline))
+            	f.close()
+
             self.progress.step()
             self.after(10, self.__do_export, file_name, lines, n, N)
         except IndexError:
