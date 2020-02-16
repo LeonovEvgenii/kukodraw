@@ -61,6 +61,7 @@ class KukaWindow(Tk):
         )
         lines = self.canvas.find_withtag('drawing')
         self.progress["maximum"] = len(lines)
+        self.export_data = []
         self.after(50, self.__do_export, file_name, lines, 0, len(lines))
         
     def __start_process_contours(self, file_name, A, B):
@@ -101,13 +102,13 @@ class KukaWindow(Tk):
                 # print(template % (i, x1, y1, i, i))
             n += 1
 
-            with open(file_name, 'a') as f:
-            	f.write(str(pline))
-            	f.close()
+            self.export_data += [pline]
 
             self.progress.step()
             self.after(10, self.__do_export, file_name, lines, n, N)
         except IndexError:
+            from json import dump
+            dump(self.export_data, open(file_name, 'w'),  indent=4)
             self.__message('Экспортировано в "%s".' % file_name)
             
     def __startupdate(self, e):
