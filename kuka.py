@@ -1,295 +1,3 @@
-'''in_list = [
-    [
-        [[ 218.0, 228.0 ], [ 221.0, 228.0 ]],
-        [
-            [
-                221.0,
-                228.0
-            ],
-            [
-                223.0,
-                229.0
-            ]
-        ],
-        [
-            [
-                223.0,
-                229.0
-            ],
-            [
-                226.0,
-                232.0
-            ]
-        ],
-        [
-            [
-                226.0,
-                232.0
-            ],
-            [
-                227.0,
-                235.0
-            ]
-        ],
-        [
-            [
-                227.0,
-                235.0
-            ],
-            [
-                227.0,
-                241.0
-            ]
-        ],
-        [
-            [
-                227.0,
-                241.0
-            ],
-            [
-                226.0,
-                244.0
-            ]
-        ],
-        [
-            [
-                226.0,
-                244.0
-            ],
-            [
-                223.0,
-                247.0
-            ]
-        ],
-        [
-            [
-                223.0,
-                247.0
-            ],
-            [
-                221.0,
-                248.0
-            ]
-        ],
-        [
-            [
-                221.0,
-                248.0
-            ],
-            [
-                218.0,
-                248.0
-            ]
-        ],
-        [
-            [
-                218.0,
-                248.0
-            ],
-            [
-                216.0,
-                247.0
-            ]
-        ],
-        [
-            [
-                216.0,
-                247.0
-            ],
-            [
-                214.0,
-                245.0
-            ]
-        ],
-        [
-            [
-                214.0,
-                245.0
-            ],
-            [
-                213.0,
-                243.0
-            ]
-        ],
-        [
-            [
-                213.0,
-                243.0
-            ],
-            [
-                212.0,
-                241.0
-            ]
-        ],
-        [
-            [
-                212.0,
-                241.0
-            ],
-            [
-                212.0,
-                235.0
-            ]
-        ],
-        [
-            [
-                212.0,
-                235.0
-            ],
-            [
-                214.0,
-                231.0
-            ]
-        ]
-    ],
-    [
-        [
-            [
-                218.0,
-                228.0
-            ],
-            [
-                214.0,
-                230.0
-            ]
-        ],
-        [
-            [
-                214.0,
-                230.0
-            ],
-            [
-                212.0,
-                235.0
-            ]
-        ],
-        [
-            [
-                212.0,
-                235.0
-            ],
-            [
-                212.0,
-                241.0
-            ]
-        ],
-        [
-            [
-                212.0,
-                241.0
-            ],
-            [
-                214.0,
-                246.0
-            ]
-        ],
-        [
-            [
-                214.0,
-                246.0
-            ],
-            [
-                216.0,
-                247.0
-            ]
-        ],
-        [
-            [
-                216.0,
-                247.0
-            ],
-            [
-                218.0,
-                248.0
-            ]
-        ],
-        [
-            [
-                218.0,
-                248.0
-            ],
-            [
-                221.0,
-                248.0
-            ]
-        ],
-        [
-            [
-                221.0,
-                248.0
-            ],
-            [
-                224.0,
-                247.0
-            ]
-        ],
-        [
-            [
-                224.0,
-                247.0
-            ],
-            [
-                226.0,
-                245.0
-            ]
-        ],
-        [
-            [
-                226.0,
-                245.0
-            ],
-            [
-                227.0,
-                241.0
-            ]
-        ],
-        [
-            [
-                227.0,
-                241.0
-            ],
-            [
-                227.0,
-                235.0
-            ]
-        ],
-        [
-            [
-                227.0,
-                235.0
-            ],
-            [
-                226.0,
-                231.0
-            ]
-        ],
-        [
-            [
-                226.0,
-                231.0
-            ],
-            [
-                224.0,
-                229.0
-            ]
-        ]
-    ]
-]
-'''
-'''
-in_list = [
-    [
-        [[1, 1], [2, 1]],
-        [[2, 1], [3, 1]],
-        [[3, 1], [4, 1]]
-    ],
-    [
-        [[1, 2], [2, 2]],
-        [[2, 2], [3, 2]],
-        [[3, 2], [4, 2]]
-    ]
-]
-'''
 
 _dat = ''
 _src = ''
@@ -363,7 +71,7 @@ def begin(x, y, total_xp):
     global n_point
     global z
 
-    _dat += '''&ACCESS RVP
+    _dat = '''&ACCESS RVP
 &REL 5
 &PARAM EDITMASK = *)
 &PARAM TEMPLATE = C:\KRC\Roboter\Template\\vorgabe
@@ -386,9 +94,9 @@ DECL E6POS XP%s={X %s,Y %s,Z %s,A -180,B 0,C 180,S 2,T 35,E1 0.0,E2 0.0,E3 0.0,E
 DECL FDAT FP%s={TOOL_NO 1,BASE_NO 0,IPO_FRAME #BASE,POINT2[] " "}
 DECL LDAT LCPDAT1={VEL 2.00000,ACC 100.000,APO_DIST 500.000,APO_FAC 50.0000,AXIS_VEL 100.000,AXIS_ACC 100.000,ORI_TYP #VAR,CIRC_TYP #BASE,JERK_FAC 50.0000,GEAR_JERK 100.000,EXAX_IGN 0}
 DECL MODULEPARAM_T LAST_TP_PARAMS={PARAMS[] "Kuka.PointName=P%s; Kuka.FrameData.base_no=0; Kuka.FrameData.tool_no=1; Kuka.FrameData.ipo_frame=#BASE; Kuka.isglobalpoint=False; Kuka.MoveDataName=CPDAT4; Kuka.MovementData.apo_fac=50; Kuka.MovementData.apo_dist=500; Kuka.MovementData.axis_acc=100; Kuka.MovementData.axis_vel=100; Kuka.MovementData.circ_typ=#BASE; Kuka.MovementData.jerk_fac=50; Kuka.MovementData.ori_typ=#VAR; Kuka.MovementData.vel=2; Kuka.MovementData.acc=100; Kuka.MovementData.exax_ign=0; Kuka.VelocityPath=2; Kuka.BlendingEnabled=False; Kuka.CurrentCDSetIndex=0      "}
-''' % (n_point, x, y, z, n_point, total_xp)
+''' % (n_point, x, y, z, n_point, n_point)
 
-    _src += '''&ACCESS RVP
+    _src = '''&ACCESS RVP
 &REL 5
 &PARAM EDITMASK = *
 &PARAM TEMPLATE = C:\KRC\Roboter\Template\\vorgabe
@@ -416,10 +124,26 @@ SPTP XHOME WITH $VEL_AXIS[1] = SVEL_JOINT(100.0), $TOOL = STOOL2(FHOME), $BASE =
 ;ENDFOLD
 '''
 
+    _src += '''
+;FOLD LIN P%s Vel=2 m/s CPDAT%s Tool[1]:marker Base[0] ;%%{PE}
+;FOLD Parameters ;%%{h}
+;Params IlfProvider=kukaroboter.basistech.inlineforms.movement.old; Kuka.IsGlobalPoint=False; Kuka.PointName=P%s; Kuka.BlendingEnabled=False; Kuka.MoveDataName=CPDAT1; Kuka.VelocityPath=2; Kuka.CurrentCDSetIndex=0; Kuka.MovementParameterFieldEnabled=True; IlfCommand=LIN
+;ENDFOLD
+$BWDSTART = FALSE
+LDAT_ACT = LCPDAT%s
+FDAT_ACT = FP%s
+BAS(#CP_PARAMS, 2.0)
+SET_CD_PARAMS (0)
+LIN XP%s
+;ENDFOLD
+''' % ((n_point, ) * 6)
+
+    n_point += 1
 
 def end():
 
     global _src
+    global _dat
 
     _src +='''
 
@@ -433,29 +157,114 @@ SPTP XHOME WITH $VEL_AXIS[1] = SVEL_JOINT(100.0), $TOOL = STOOL2(FHOME), $BASE =
 END
 '''
 
+    _dat += 'ENDDAT'
 
-down()
 
-total_xp = 0;
-for pline in in_list:
-    total_xp += len(pline)
+def geometric_transformation(in_list):
 
-begin(in_list[0][0][0][0], in_list[0][0][0][1], total_xp)
+    in_list_reverce = [ _ for _ in in_list if _ ]
+    # for pline in in_list:
+    #     pline_temp = []
+    #     for line in pline:
+    #         line_temp = []
+    #         for point in line:
+    #             line_temp.append([point[1], point[0]])
+    #         pline_temp.append(line_temp)
+    #     in_list_reverce.append(pline_temp)
 
-for indx, pline in enumerate(in_list):
+
+    min_x, min_y, max_x, max_y = 100000,100000,0,0
+    for pline in in_list_reverce:
+        for line in pline:
+            for point in line:
+                if min_x > point[0]:    
+                    min_x = point[0]
+                if min_y > point[1]:    
+                    min_y = point[1]
+                if max_x < point[0]:    
+                    max_x = point[0]
+                if max_y < point[1]:    
+                    max_y = point[1]
+    # print(min_x, min_y, max_x, max_y)
+    real_min_x =  280
+    real_min_y = -155
+    real_max_x =  480
+    real_max_y =  155
+
+    dx = real_min_x - min_x
+    dy = real_min_y - min_y
+
+    sx = (real_max_x - real_min_x)/(max_x - min_x)
+    sy = (real_max_y - real_min_y)/(max_y - min_y)
+
+    s = sx if sx < sy else sy
+
+    in_list_temp = []
+    for pline in in_list_reverce:
+        pline_temp = []
+        for line in pline:
+            line_temp = []
+            for point in line:
+                line_temp.append([point[0] * s + dx, point[1] * s + dy])
+            pline_temp.append(line_temp)
+        in_list_temp.append(pline_temp)
+
+    return in_list_temp
+
+
+def gen_kuka_code(raw_list):
+    
+    global n_point
+
+    in_list = geometric_transformation(raw_list)
+
     down()
-    for line in pline:
-        draw(line[0][0],line[0][1],line[1][0],line[1][1])
-    up()
-    try:
-        draw(pline[-1][1][0], pline[-1][1][1], in_list[indx+1][0][0][0], in_list[indx+1][0][0][1])
-    except IndexError:
-        pass
-        
-end()
 
-print(_dat)
-print(_src)
+    total_xp = 0;
+    for pline in in_list:
+        total_xp += len(pline)
 
-open("photo.dat", 'w').write(_dat)
-open("photo.src", 'w').write(_src)
+    # print(total_xp)
+    begin(in_list[0][0][0][0], in_list[0][0][0][1], total_xp + 1)
+
+    for indx, pline in enumerate(in_list):
+        down()
+        for line in pline:
+            # print(n_point)
+            draw(line[0][0],line[0][1],line[1][0],line[1][1])
+        up()
+        try:
+            draw(pline[-1][1][0], pline[-1][1][1], in_list[indx+1][0][0][0], in_list[indx+1][0][0][1])
+        except IndexError:
+            pass
+            
+    end()
+
+    n_point = 1
+
+    # print(_dat)
+    # print(_src)
+
+    return (_dat, _src)
+
+    
+
+
+
+if __name__ == '__main__':
+    '''
+    in_list = [
+        [
+            [[1, 1], [2, 1]],
+            [[2, 1], [3, 1]],
+            [[3, 1], [4, 1]]
+        ],
+        [
+            [[1, 2], [2, 2]],
+            [[2, 2], [3, 2]],
+            [[3, 2], [4, 2]]
+        ]
+    ]
+    '''
+    # gen_kuka_code(in_list)
+
