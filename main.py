@@ -5,11 +5,6 @@ Created on Wed Nov 13 22:21:38 2019
 
 @author: dan
 """
-template = """
-DECL E6POS XP%s={X %s,Y %s,Z 0.0,A -179.997406,B 0.00397241442,C 179.999054,S 2,T 8,E1 0.0,E2 0.0,E3 0.0,E4 0.0,E5 0.0,E6 0.0}
-DECL FDAT FP%s={TOOL_NO 1,BASE_NO 0,IPO_FRAME #BASE,POINT2[] " "}
-DECL LDAT LCPDAT%s={VEL 2.00000,ACC 100.000,APO_DIST 500.000,APO_FAC 50.0000,AXIS_VEL 100.000,AXIS_ACC 100.000,ORI_TYP #VAR,CIRC_TYP #BASE,JERK_FAC 50.0000,GEAR_JERK 100.000,EXAX_IGN 0}
-"""
 
 from tkinter import *
 from tkinter import filedialog as fd
@@ -19,6 +14,8 @@ from generate_lines import generate_lines, d
 from cv_wrapper import get_contours
 
 from gcode.settings import BEGIN_GCODE, END_GCODE
+
+from kuka import *
 
 class KukaWindow(Tk):
     msg_n = 0
@@ -46,7 +43,8 @@ class KukaWindow(Tk):
                     ("PNG files", "*.png"),
                     ("JPG files", "*.jpg"),
                     ("All files", "*.*"),
-                )
+                ),
+                initialdir=('img')
             )
         else:
             self.__file_name = file_name
@@ -57,7 +55,9 @@ class KukaWindow(Tk):
         file_name = fd.asksaveasfilename(
             filetypes=(
                 ("All files", "*.*"),
-            )
+            ),
+            initialdir=('/img/..'),
+            initialfile=('photo')
         )
         lines = self.canvas.find_withtag('drawing')
         self.progress["maximum"] = len(lines)
@@ -99,7 +99,6 @@ class KukaWindow(Tk):
                 x1, y1 = coords[i*2+0], coords[i*2+1]
                 x2, y2 = coords[i*2+2], coords[i*2+3]
                 pline += [((x1,y1),(x2,y2))]
-                # print(template % (i, x1, y1, i, i))
             n += 1
 
             self.export_data += [pline]
@@ -107,8 +106,18 @@ class KukaWindow(Tk):
             self.progress.step()
             self.after(10, self.__do_export, file_name, lines, n, N)
         except IndexError:
+
+            files = gen_kuka_code(self.export_data)
+
+            _dat = files[0]
+            _src = files[1]
+
+            open(file_name + ".dat", 'w').write(_dat)
+            open(file_name + ".src", 'w').write(_src)
+
             from json import dump
-            dump(self.export_data, open(file_name, 'w'),  indent=4)
+            dump(self.export_data, open('test.dat', 'w'),  indent=4)
+
             self.__message('Экспортировано в "%s".' % file_name)
             
     def __startupdate(self, e):
